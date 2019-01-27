@@ -1,0 +1,28 @@
+﻿Build started 6/16/2018 11:58:28 PM.
+     1>Project "C:\Users\Jeff\Desktop\LEA-Ref\LEA_C_Standalone_src\vs\libLEA\libLEA.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D LEA_LIB=0 /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /arch:AVX /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TC /analyze- /errorReport:prompt ..\..\src\lea_t_avx2_sse2.c ..\..\src\lea_t_avx2_xop.c
+         lea_t_avx2_xop.c
+         lea_t_avx2_sse2.c
+         Generating Code...
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\Lib.exe /OUT:"C:\Users\Jeff\Desktop\LEA-Ref\LEA_C_Standalone_src\vs\Debug\libLEA.lib" /NOLOGO Debug\cpu_info_arm.obj
+         Debug\cpu_info_ia32.obj
+         Debug\lea_core.obj
+         Debug\lea_core_xop.obj
+         Debug\lea_gcm_generic.obj
+         Debug\lea_gcm_pclmul.obj
+         Debug\lea_base.obj
+         Debug\lea_online.obj
+         Debug\lea_t_avx2_sse2.obj
+         Debug\lea_t_avx2_xop.obj
+         Debug\lea_t_fallback.obj
+         Debug\lea_t_generic.obj
+         Debug\lea_t_sse2.obj
+         Debug\lea_t_xop.obj
+         libLEA.vcxproj -> C:\Users\Jeff\Desktop\LEA-Ref\LEA_C_Standalone_src\vs\Debug\libLEA.lib
+     1>Done Building Project "C:\Users\Jeff\Desktop\LEA-Ref\LEA_C_Standalone_src\vs\libLEA\libLEA.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.89

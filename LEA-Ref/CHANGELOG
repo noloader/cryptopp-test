@@ -1,0 +1,6 @@
+2015.11.17. 
+ - Standalone C code: fixed for big-endian platforms
+ - python code: padding fixed 
+
+2016.05.17.
+ - python code: LEA/__init__.py fixed and setup.py added

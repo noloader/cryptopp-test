@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "hc-256", "hc-256.exe", "{BBF5D792-8558-4555-8E0C-303C32DC09EC}"
+	ProjectSection(DebuggerProjectSystem) = preProject
+		PortSupplier = 00000000-0000-0000-0000-000000000000
+		Executable = C:\Users\Jeff\Desktop\Crypto++ Implementations\hc256source\HC256_Ecrypt_Part_C\hc-256.exe
+		RemoteMachine = ASUS-WINDOWS8
+		StartingDirectory = C:\Users\Jeff\Desktop\Crypto++ Implementations\hc256source\HC256_Ecrypt_Part_C
+		Environment = Default
+		LaunchingEngine = 00000000-0000-0000-0000-000000000000
+		LaunchSQLEngine = No
+		AttachLaunchAction = No
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BBF5D792-8558-4555-8E0C-303C32DC09EC}.Debug|x86.ActiveCfg = Debug|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

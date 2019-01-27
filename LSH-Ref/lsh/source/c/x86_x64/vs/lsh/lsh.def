@@ -1,0 +1,15 @@
+LIBRARY LSH
+EXPORTS
+	lsh_init		@1
+	lsh_update		@2
+	lsh_final		@3
+	lsh_digest		@4
+
+	hmac_lsh_init	@5
+	hmac_lsh_update	@6
+	hmac_lsh_final	@7
+	hmac_lsh_digest	@8
+
+	;lsh_init_simd	@9
+	lsh_get_simd_type	@10
+

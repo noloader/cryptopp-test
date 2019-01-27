@@ -1,0 +1,49 @@
+﻿Build started 6/16/2018 11:59:30 PM.
+     1>Project "C:\Users\Jeff\Desktop\LEA-Ref\LEA_C_Standalone_src\vs\libLEA\libLEA.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /GL /D WIN32 /D NDEBUG /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MT /GS /Gy /arch:AVX /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Release\\" /Fd"x64\Release\vc110.pdb" /Gd /TC /errorReport:prompt ..\..\src\cpu_info_arm.c ..\..\src\cpu_info_ia32.c ..\..\src\lea_core.c ..\..\src\lea_gcm_generic.c ..\..\src\lea_base.c ..\..\src\lea_online.c ..\..\src\lea_t_avx2_sse2.c ..\..\src\lea_t_avx2_xop.c ..\..\src\lea_t_fallback.c ..\..\src\lea_t_generic.c
+         cpu_info_arm.c
+         cpu_info_ia32.c
+         lea_core.c
+         lea_gcm_generic.c
+     1>..\..\src\lea_gcm_generic.c(290): warning C4018: '<' : signed/unsigned mismatch
+         lea_base.c
+         lea_online.c
+         lea_t_avx2_sse2.c
+         lea_t_avx2_xop.c
+         lea_t_fallback.c
+         lea_t_generic.c
+     1>c:\users\jeff\desktop\lea-ref\lea_c_standalone_src\src\lea_cbc.h(34): warning C4101: 'tmp' : unreferenced local variable
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /GL /D WIN32 /D NDEBUG /D _LIB /D _UNICODE /D UNICODE /Gm- /EHsc /MT /GS /Gy /arch:SSE2 /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Release\\" /Fd"x64\Release\vc110.pdb" /Gd /TC /errorReport:prompt ..\..\src\lea_core_xop.c ..\..\src\lea_gcm_pclmul.c ..\..\src\lea_t_sse2.c ..\..\src\lea_t_xop.c
+     1>cl : Command line warning D9002: ignoring unknown option '/arch:SSE2'
+         lea_core_xop.c
+         lea_gcm_pclmul.c
+     1>..\..\src\lea_gcm_pclmul.c(98): warning C4101: 'i' : unreferenced local variable
+         lea_t_sse2.c
+         lea_t_xop.c
+     1>c:\users\jeff\desktop\lea-ref\lea_c_standalone_src\src\lea_xop.h(489): warning C4101: 'pt_simd' : unreferenced local variable
+     1>c:\users\jeff\desktop\lea-ref\lea_c_standalone_src\src\lea_xop.h(489): warning C4101: 'ct_simd' : unreferenced local variable
+     1>c:\users\jeff\desktop\lea-ref\lea_c_standalone_src\src\lea_xop.h(538): warning C4101: 'tmp_simd' : unreferenced local variable
+     1>c:\users\jeff\desktop\lea-ref\lea_c_standalone_src\src\lea_xop.h(594): warning C4101: 't' : unreferenced local variable
+     1>c:\users\jeff\desktop\lea-ref\lea_c_standalone_src\src\lea_ctr.h(40): warning C4101: 'block' : unreferenced local variable
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\Lib.exe /OUT:"C:\Users\Jeff\Desktop\LEA-Ref\LEA_C_Standalone_src\vs\\bin\x64\libLEA.lib" /NOLOGO /MACHINE:X64 /LTCG x64\Release\cpu_info_arm.obj
+         x64\Release\cpu_info_ia32.obj
+         x64\Release\lea_core.obj
+         x64\Release\lea_core_xop.obj
+         x64\Release\lea_gcm_generic.obj
+         x64\Release\lea_gcm_pclmul.obj
+         x64\Release\lea_base.obj
+         x64\Release\lea_online.obj
+         x64\Release\lea_t_avx2_sse2.obj
+         x64\Release\lea_t_avx2_xop.obj
+         x64\Release\lea_t_fallback.obj
+         x64\Release\lea_t_generic.obj
+         x64\Release\lea_t_sse2.obj
+         x64\Release\lea_t_xop.obj
+         libLEA.vcxproj -> C:\Users\Jeff\Desktop\LEA-Ref\LEA_C_Standalone_src\vs\\bin\x64\libLEA.lib
+     1>Done Building Project "C:\Users\Jeff\Desktop\LEA-Ref\LEA_C_Standalone_src\vs\libLEA\libLEA.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.57

@@ -1,0 +1,98 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252"></head><body>
+<title>Poly1305-AES using GMP and OpenSSL</title>
+<meta name="keywords" content="Poly1305, Poly1305-AES, GMP, OpenSSL">
+<a href="https://cr.yp.to/djb.html">D. J. Bernstein</a>
+<br><a href="https://cr.yp.to/antiforgery.html">Authenticators and signatures</a>
+<br><a href="https://cr.yp.to/mac.html">A state-of-the-art message-authentication code</a>
+<h1>Poly1305-AES using GMP and OpenSSL</h1>
+<tt>poly1305aes_test</tt> is an implementation of Poly1305-AES
+that uses GMP for integer arithmetic and OpenSSL for AES.
+I recommend against using <tt>poly1305aes_test</tt>
+for anything other than tests;
+my main reason for publishing it
+is to help communicate the definition of Poly1305-AES.
+<p>
+Requirements:
+<tt>poly1305aes_test</tt>
+must be compiled with <tt>-lcrypto -lgmp</tt>.
+The system must have
+GMP 3 or later (for the <tt>mpz_tdiv_q_ui</tt> return value).
+The system must also have
+OpenSSL 0.9.7 or later (for <tt>AES_encrypt</tt>).
+</p><p>
+Here are the <tt>poly1305aes_test</tt> files:
+</p><ul>
+<li><a href="https://cr.yp.to/mac/poly1305_gmp.h"><tt>poly1305_gmp.h</tt></a>
+</li><li><a href="https://cr.yp.to/mac/poly1305_gmp.c"><tt>poly1305_gmp.c</tt></a>
+</li><li><a href="https://cr.yp.to/mac/aes_openssl.h"><tt>aes_openssl.h</tt></a>
+</li><li><a href="https://cr.yp.to/mac/aes_openssl.c"><tt>aes_openssl.c</tt></a>
+</li><li><a href="https://cr.yp.to/mac/constanttime.h"><tt>constanttime.h</tt></a>
+</li><li><a href="https://cr.yp.to/mac/constanttime_isequal.c"><tt>constanttime_isequal.c</tt></a>
+</li><li><a href="https://cr.yp.to/mac/poly1305aes_test.h"><tt>poly1305aes_test.h</tt></a>
+</li><li><a href="https://cr.yp.to/mac/poly1305aes_test_clamp.c"><tt>poly1305aes_test_clamp.c</tt></a>
+</li><li><a href="https://cr.yp.to/mac/poly1305aes_test_authenticate.c"><tt>poly1305aes_test_authenticate.c</tt></a>
+</li><li><a href="https://cr.yp.to/mac/poly1305aes_test_verify.c"><tt>poly1305aes_test_verify.c</tt></a>
+</li></ul>
+<p>
+Here are various tests:
+</p><ul>
+<li><a href="https://cr.yp.to/mac/test-constanttime.c"><tt>test-constanttime.c</tt></a>
+checks, for various pairs of arrays,
+that <tt>constanttime_isequal</tt> produces nonzero
+exactly when <tt>memcmp</tt> produces zero.
+Expected output: None.
+</li><li><a href="https://cr.yp.to/mac/test-aes.c"><tt>test-aes.c</tt></a>
+prints the output of <tt>aes_openssl</tt>
+for a standard selection of 400 inputs.
+Expected output:
+<a href="https://cr.yp.to/mac/test-aes.out"><tt>test-aes.out</tt></a>.
+</li><li><a href="https://cr.yp.to/mac/test-poly1305aes.c"><tt>test-poly1305aes.c</tt></a>
+prints authenticators produced by <tt>poly1305aes_authenticate</tt>
+for every message length from 0 bytes through 1000 bytes.
+It also checks that <tt>poly1305aes_verify</tt>
+accepts the authenticators,
+and that <tt>poly1305aes_verify</tt>
+does not accept various modified versions of the authenticators.
+The keys, nonces, and messages are various functions
+of previous authenticators.
+Expected first 10010 lines of output (10 loops):
+<a href="https://cr.yp.to/mac/test-poly1305aes.out"><tt>test-poly1305aes.out</tt></a>.
+MD5 checksum of first 123456 lines of output:
+<tt>707212358360ae459bc0ef293a5354e8</tt>.
+MD5 checksum of first 1234567 lines of output:
+<tt>3b2bc877e4e64efbfe39945ac102c768</tt>.
+MD5 checksum of first 12345678 lines of output:
+<tt>ef3831c8b2087ebf6844f2265e1da2c2</tt>.
+MD5 checksum of first 123456789 lines of output:
+<tt>5e29ea7450475dc419a0f95afde0cfdc</tt>.
+MD5 checksum of complete output (1001000000 lines):
+<tt>3ceb64843c00984c5c2b7897f499141b</tt>.
+</li></ul>
+<p>
+The most obvious difference between
+<tt>poly1305aes_test</tt>
+and a serious Poly1305-AES implementation such as
+<a href="https://cr.yp.to/mac/sparc.html"><tt>poly1305aes_sparc</tt></a>
+is that a serious implementation is much faster.
+<tt>poly1305aes_test_verify</tt> takes about
+140000 UltraSPARC-III cycles (or 150000 Pentium-M cycles)
+for a 1024-byte message,
+for example,
+and 14000 UltraSPARC-III cycles (or 11000 Pentium-M cycles)
+for a 16-byte message;
+<tt>poly1305aes_sparc_verify</tt> takes only about
+5600 UltraSPARC-III cycles for a 1024-byte message
+and only about 850 UltraSPARC-III cycles for a 16-byte message.
+</p><p>
+A less obvious difference between
+<tt>poly1305aes_test</tt>
+and a serious Poly1305-AES implementation
+is that, inside <tt>poly1305aes_test</tt>,
+GMP allocates memory and will kill the program if it fails.
+It's hard to use GMP safely in a typical server that needs to keep running.
+The only memory allocated by a serious implementation
+is a small, constant, easily pre-provisioned amount of stack space.
+
+
+</p></body></html>

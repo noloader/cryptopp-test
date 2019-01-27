@@ -1,0 +1,21 @@
+﻿Build started 6/17/2018 8:10:11 PM.
+     1>Project "C:\Users\Jeff\Desktop\LEA-Ref\LEA_C_Standalone_src\vs\test_tv\test_tv.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /Od /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /arch:AVX /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TC /errorReport:prompt ..\..\benchmark.c ..\..\lea_benchmark.c ..\..\lea_vs.c ..\..\main.c
+         main.c
+         lea_vs.c
+         lea_benchmark.c
+         benchmark.c
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Jeff\Desktop\LEA-Ref\LEA_C_Standalone_src\vs\x64\Debug\test_tv.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Jeff\Desktop\LEA-Ref\LEA_C_Standalone_src\vs\x64\Debug\test_tv.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jeff\Desktop\LEA-Ref\LEA_C_Standalone_src\vs\x64\Debug\test_tv.lib" /MACHINE:X64 x64\Debug\benchmark.obj
+         x64\Debug\lea_benchmark.obj
+         x64\Debug\lea_vs.obj
+         x64\Debug\main.obj
+         "C:\Users\Jeff\Desktop\LEA-Ref\LEA_C_Standalone_src\vs\x64\Debug\libLEA.lib"
+         test_tv.vcxproj -> C:\Users\Jeff\Desktop\LEA-Ref\LEA_C_Standalone_src\vs\x64\Debug\test_tv.exe
+     1>Done Building Project "C:\Users\Jeff\Desktop\LEA-Ref\LEA_C_Standalone_src\vs\test_tv\test_tv.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.64

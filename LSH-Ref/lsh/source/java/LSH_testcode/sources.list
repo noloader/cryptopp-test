@@ -1,0 +1,5 @@
+./src/kr/re/nsr/crypto/hash/vs/HMACLSH256VS.java
+./src/kr/re/nsr/crypto/hash/vs/HMACLSH512VS.java
+./src/kr/re/nsr/crypto/hash/vs/LSH256VS.java
+./src/kr/re/nsr/crypto/hash/vs/LSH512VS.java
+./src/LshTestMain.java
