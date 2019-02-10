@@ -8,6 +8,7 @@
 #include <iostream>
 #include <memory>
 
+// Random step
 uint8_t Step(uint8_t mask)
 {
     using namespace Botan;
@@ -35,12 +36,12 @@ void GenerateTest(size_t plainLen, size_t aadLen)
     enc->set_key(key);
     enc->set_ad(aad);
     enc->start(iv);
-	
+
     enc->finish(cipher);
-	
-	secure_vector<uint8_t>::iterator where = cipher.end()-enc->tag_size();
-	secure_vector<uint8_t> mac(where, cipher.end());
-	cipher.erase(where, cipher.end());
+
+    secure_vector<uint8_t>::iterator where = cipher.end()-enc->tag_size();
+    secure_vector<uint8_t> mac(where, cipher.end());
+    cipher.erase(where, cipher.end());
 
     static bool once = false;
     if (once == false)
@@ -50,9 +51,9 @@ void GenerateTest(size_t plainLen, size_t aadLen)
         std::cout << "Source: Botan 2.10 library" << std::endl;
         once = true;
     }
-    
+
     std::cout << "#" << std::endl;
-	std::cout << "Key: " << hex_encode(key) << std::endl;
+    std::cout << "Key: " << hex_encode(key) << std::endl;
     std::cout << "IV: " << hex_encode(iv) << std::endl;
     std::cout << "Header: " << hex_encode(aad) << std::endl;
     std::cout << "Plaintext: " << hex_encode(plain) << std::endl;
@@ -66,20 +67,20 @@ int main()
     size_t i=0;
     while(i<256)
     {
-		size_t j=0;
+        size_t j=0;
         while(j<128)
         {
             GenerateTest(i, j);
-			
-			if (j<16)
-				j++;
-			else
-				j += Step(31);
+
+            if (j<16)
+                j++;
+            else
+                j += Step(31);
         }
 
-	    if (i<16)
-			i++;
-		else
-			i += Step(63);
+        if (i<16)
+            i++;
+        else
+            i += Step(63);
     }
 }
