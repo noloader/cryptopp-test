@@ -1,0 +1,18 @@
+diff --git a/SPARX b/SPARX
+--- a/SPARX
++++ b/SPARX
+@@ -1 +1 @@
+-Subproject commit 9d74051c3591bf86ccc4cd9cd564a972bd22dcc0
++Subproject commit 9d74051c3591bf86ccc4cd9cd564a972bd22dcc0-dirty
+diff --git a/Simeck b/Simeck
+--- a/Simeck
++++ b/Simeck
+@@ -1 +1 @@
+-Subproject commit 61c84609b7bff1090c381e56da1d78234cc983d0
++Subproject commit 61c84609b7bff1090c381e56da1d78234cc983d0-dirty
+diff --git a/sm4ni b/sm4ni
+--- a/sm4ni
++++ b/sm4ni
+@@ -1 +1 @@
+-Subproject commit 260903e8121ff32b208d4fc0a966f3c0bea09eab
++Subproject commit 260903e8121ff32b208d4fc0a966f3c0bea09eab-dirty
