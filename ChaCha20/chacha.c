@@ -118,13 +118,13 @@ void ECRYPT_keystream_bytes(ECRYPT_ctx *x,u8 *stream,u32 bytes)
 
 void XXX_rand_bytes(u8* buffer, size_t size)
 {
-	static u32 add = ~(u16)0;
+  static u32 add = ~(u16)0;
 
-    srand(time(NULL) ^ (time_t)add);
-	while (size--)
-		*buffer++ = (u8)rand();
+  srand(time(NULL) ^ (time_t)add);
+  while (size--)
+    *buffer++ = (u8)rand();
 
-	add = (u32)rand();
+  add = (u32)rand();
 }
 
 void XXX_ctr_setup(ECRYPT_ctx *x, u32 hi, u32 lo)
@@ -135,29 +135,29 @@ void XXX_ctr_setup(ECRYPT_ctx *x, u32 hi, u32 lo)
 
 int main(int argc, char* argv[])
 {
-	u8 key[32]; u8 iv[8];
-	memset(key, 0x00, sizeof (key));
-	memset(iv, 0x00, sizeof (iv));
-	
-	ECRYPT_ctx ctx;
-	ECRYPT_keysetup(&ctx, key, sizeof(key)*8, 0);
-	ECRYPT_ivsetup(&ctx, iv);
+    u8 key[32]; u8 iv[8];
+    memset(key, 0x00, sizeof (key));
+    memset(iv, 0x00, sizeof (iv));
+    
+    ECRYPT_ctx ctx;
+    ECRYPT_keysetup(&ctx, key, sizeof(key)*8, 0);
+    ECRYPT_ivsetup(&ctx, iv);
 
-	u32 hi=0, lo=0xfffffff0;
-	XXX_ctr_setup(&ctx, hi, lo);
+    u32 hi=0, lo=0xfffffff0;
+    XXX_ctr_setup(&ctx, hi, lo);
 
-	u8 kstream[16*64];
-	ECRYPT_keystream_bytes(&ctx, kstream, sizeof(kstream));
+    u8 kstream[16*64];
+    ECRYPT_keystream_bytes(&ctx, kstream, sizeof(kstream));
 
-	printf("Rounds %d, hi %08x, lo %08x\n", ROUNDS, hi, lo);
+    printf("Rounds %d, hi %08x, lo %08x\n", ROUNDS, hi, lo);
 
-	for(size_t i=0; i<sizeof(kstream); ++i)
-	{
-		if (i && i%32 == 0)
-			printf(" \\\n");
+    for(size_t i=0; i<sizeof(kstream); ++i)
+    {
+        if (i && i%32 == 0)
+            printf(" \\\n");
 
-		printf("%02X", kstream[i]);
-	}
+        printf("%02X", kstream[i]);
+    }
 
-	return 0;
+    return 0;
 }
