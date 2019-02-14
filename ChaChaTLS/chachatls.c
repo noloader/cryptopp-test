@@ -117,13 +117,13 @@ void ECRYPT_keystream_bytes(ECRYPT_ctx *x,u8 *stream,u32 bytes)
 
 void XXX_rand_bytes(u8* buffer, size_t size)
 {
-	static u32 add = (u16)-1;
+  static u32 add = ~(u16)0;
 
-    srand(time(NULL) ^ (time_t)add);
-	while (size--)
-		*buffer++ = (u8)rand();
+  srand(time(NULL) ^ (time_t)add);
+  while (size--)
+    *buffer++ = (u8)rand();
 
-	add = (u32)rand();
+  add = (u32)rand();
 }
 
 void XXX_ctr_setup(ECRYPT_ctx *x, u32 val)
@@ -133,51 +133,51 @@ void XXX_ctr_setup(ECRYPT_ctx *x, u32 val)
 
 int main(int argc, char* argv[])
 {
-	u8 key[32]; u8 iv[12];
-	//memset(key, 0x00, sizeof (key));
-	//memset(iv, 0x00, sizeof (iv));
-	
-	XXX_rand_bytes(key, sizeof(key));
-	XXX_rand_bytes(iv, sizeof(iv));
-	
-	printf("Key: ");
-	for(size_t i=0; i<sizeof(key); ++i)
-	{
-		if (i && i%8 == 0)
-			printf(" ");
+    u8 key[32]; u8 iv[12];
+    //memset(key, 0x00, sizeof (key));
+    //memset(iv, 0x00, sizeof (iv));
+    
+    XXX_rand_bytes(key, sizeof(key));
+    XXX_rand_bytes(iv, sizeof(iv));
+    
+    printf("Key: ");
+    for(size_t i=0; i<sizeof(key); ++i)
+    {
+        if (i && i%8 == 0)
+            printf(" ");
 
-		printf("%02X", key[i]);
-	}
-	printf("\n");
+        printf("%02X", key[i]);
+    }
+    printf("\n");
 
-	printf("IV: ");
-	for(size_t i=0; i<sizeof(iv); ++i)
-	{
-		printf("%02X ", iv[i]);
-	}
-	printf("\n");
-	
-	ECRYPT_ctx ctx;
-	ECRYPT_keysetup(&ctx, key, sizeof(key)*8, 0);
-	ECRYPT_ivsetup(&ctx, iv);
+    printf("IV: ");
+    for(size_t i=0; i<sizeof(iv); ++i)
+    {
+        printf("%02X ", iv[i]);
+    }
+    printf("\n");
+    
+    ECRYPT_ctx ctx;
+    ECRYPT_keysetup(&ctx, key, sizeof(key)*8, 0);
+    ECRYPT_ivsetup(&ctx, iv);
 
-	//u32 val=0;
-	u32 val=0xfffffffe;
-	XXX_ctr_setup(&ctx, val);
+    //u32 val=0;
+    u32 val=0xfffffffe;
+    XXX_ctr_setup(&ctx, val);
 
-	u8 kstream[1024];
-	ECRYPT_keystream_bytes(&ctx, kstream, sizeof(kstream));
+    u8 kstream[1024];
+    ECRYPT_keystream_bytes(&ctx, kstream, sizeof(kstream));
 
-	printf("Initial Counter Block %08x\nBytes %d\n", val, sizeof(kstream));
+    printf("Initial Counter Block %08x\nBytes %d\n", val, sizeof(kstream));
 
-	for(size_t i=0; i<sizeof(kstream); ++i)
-	{
-		if (i && i%32 == 0)
-			printf(" \\\n");
+    for(size_t i=0; i<sizeof(kstream); ++i)
+    {
+        if (i && i%32 == 0)
+            printf(" \\\n");
 
-		printf("%02X", kstream[i]);
-	}
-	printf("\n");
+        printf("%02X", kstream[i]);
+    }
+    printf("\n");
 
-	return 0;
+    return 0;
 }
