@@ -24,10 +24,10 @@ void SHAKE128_Test(size_t length)
     AutoSeeded_RNG rng;
 
     SHAKE_128 hash(32*8);
-	
-	secure_vector<uint8_t> message = rng.random_vec(length);
-	hash.update(message);
-	secure_vector<uint8_t> digest = hash.final();
+    
+    secure_vector<uint8_t> message = rng.random_vec(length);
+    hash.update(message);
+    secure_vector<uint8_t> digest = hash.final();
 
     static bool once = false;
     if (once == false)
@@ -50,15 +50,15 @@ void SHAKE256_Test(size_t length)
     AutoSeeded_RNG rng;
 
     SHAKE_256 hash(64*8);
-	
-	secure_vector<uint8_t> message = rng.random_vec(length);
-	hash.update(message);
-	secure_vector<uint8_t> digest = hash.final();
+    
+    secure_vector<uint8_t> message = rng.random_vec(length);
+    hash.update(message);
+    secure_vector<uint8_t> digest = hash.final();
 
     static bool once = false;
     if (once == false)
     {
-        // std::cout << "AlgorithmType: MessageDigest" << std::endl;
+        std::cout << "AlgorithmType: MessageDigest" << std::endl;
         std::cout << "Name: SHAKE256" << std::endl;
         std::cout << "Source: Botan 2.10 library" << std::endl;
         once = true;
@@ -83,12 +83,12 @@ int main()
             i += Step(15);
         else
             i += Step(63);
-		
-		tests++;
+        
+        tests++;
     }
 
-	tests=0, i=0;
-	while(tests < 150)
+    tests=0, i=0;
+    while(tests < 150)
     {
         SHAKE256_Test(i);           
 
@@ -99,6 +99,6 @@ int main()
         else
             i += Step(63);
 
-		tests++;
+        tests++;
     }
 }
