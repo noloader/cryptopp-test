@@ -21,18 +21,27 @@ uint8_t Step(uint8_t mask)
     return b & mask;
 }
 
-void GenerateTest(size_t plainLen, size_t aadLen)
+void GenerateTest(size_t plainLen)
 {
     using namespace Botan;
     AutoSeeded_RNG rng;
+	static size_t count=0;
 
-	CBC_Encryption enc(new Skipjack, new PKCS7_Padding);
+	CBC_Encryption enc(new Skipjack, new Null_Padding);
 
-    const secure_vector<uint8_t> key = rng.random_vec(10);
-    const secure_vector<uint8_t> iv = rng.random_vec(8);
+    secure_vector<uint8_t> key = rng.random_vec(10);
+    secure_vector<uint8_t> iv = rng.random_vec(8);
+	
+	if (count == 0)
+	{
+		const uint8_t k[] = { 0x00, 0x99, 0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11 };
+		const uint8_t v[] = { 0x33, 0x22, 0x11, 0x00, 0xdd, 0xcc, 0xbb, 0xaa };
+		key = secure_vector<uint8_t>(k, k+sizeof(k));
+		iv = secure_vector<uint8_t>(v, v+sizeof(v));
+	}
 
     secure_vector<uint8_t> plain = rng.random_vec(plainLen);
-	secure_vector<uint8_t> cipher;
+	secure_vector<uint8_t> cipher(plain.size());
 
     enc.set_key(key);
     enc.start(iv.data(), iv.size());
@@ -54,27 +63,21 @@ void GenerateTest(size_t plainLen, size_t aadLen)
     std::cout << "Plaintext: " << hex_encode(plain) << std::endl;
     std::cout << "Ciphertext: " << hex_encode(cipher) << std::endl;
     std::cout << "Test: Encrypt" << std::endl;
+	
+	count++;
 }
 
 int main()
 {
-    size_t i=0;
+    size_t i=8;
     while(i<256)
     {
         size_t j=0;
-        while(j<128)
+        while(j++<8)
         {
-            GenerateTest(i, j);
-
-            if (j<16)
-                j++;
-            else
-                j += Step(15);
+            GenerateTest(i);
         }
 
-        if (i<16)
-            i++;
-        else
-            i += Step(31);
+        i+=8;
     }
 }
