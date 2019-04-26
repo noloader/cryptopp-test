@@ -25,23 +25,25 @@ void GenerateTest(size_t plainLen)
 {
     using namespace Botan;
     AutoSeeded_RNG rng;
-	static size_t count=0;
+    static size_t count=0;
 
-	CBC_Encryption enc(new Skipjack, new Null_Padding);
+    CBC_Encryption enc(new Skipjack, new Null_Padding);
 
     secure_vector<uint8_t> key = rng.random_vec(10);
     secure_vector<uint8_t> iv = rng.random_vec(8);
-	
-	if (count == 0)
-	{
-		const uint8_t k[] = { 0x00, 0x99, 0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11 };
-		const uint8_t v[] = { 0x33, 0x22, 0x11, 0x00, 0xdd, 0xcc, 0xbb, 0xaa };
-		key = secure_vector<uint8_t>(k, k+sizeof(k));
-		iv = secure_vector<uint8_t>(v, v+sizeof(v));
-	}
 
     secure_vector<uint8_t> plain = rng.random_vec(plainLen);
-	secure_vector<uint8_t> cipher(plain.size());
+    secure_vector<uint8_t> cipher(plain.size());
+
+    if (count == 0)
+    {
+        const uint8_t k[] = { 0x00, 0x99, 0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11 };
+        const uint8_t p[] = { 0x33, 0x22, 0x11, 0x00, 0xdd, 0xcc, 0xbb, 0xaa };
+        key = secure_vector<uint8_t>(k, k+sizeof(k));
+		iv = secure_vector<uint8_t>(8);
+        plain = secure_vector<uint8_t>(p, k+sizeof(p));
+		cipher.resize(plain.size());
+    }
 
     enc.set_key(key);
     enc.start(iv.data(), iv.size());
@@ -63,21 +65,17 @@ void GenerateTest(size_t plainLen)
     std::cout << "Plaintext: " << hex_encode(plain) << std::endl;
     std::cout << "Ciphertext: " << hex_encode(cipher) << std::endl;
     std::cout << "Test: Encrypt" << std::endl;
-	
-	count++;
+    
+    count++;
 }
 
 int main()
 {
-    size_t i=8;
-    while(i<256)
+    for (size_t i=8; i<256; i+=8)
     {
-        size_t j=0;
-        while(j++<8)
+        for (size_t j=0; j++<8; j++)
         {
             GenerateTest(i);
         }
-
-        i+=8;
     }
 }
