@@ -38,11 +38,13 @@ void GenerateTest(size_t plainLen)
     if (count == 0)
     {
         const uint8_t k[] = { 0x00, 0x99, 0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11 };
+        const uint8_t v[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
         const uint8_t p[] = { 0x33, 0x22, 0x11, 0x00, 0xdd, 0xcc, 0xbb, 0xaa };
+
         key = secure_vector<uint8_t>(k, k+sizeof(k));
-		iv = secure_vector<uint8_t>(8);
-        plain = secure_vector<uint8_t>(p, k+sizeof(p));
-		cipher.resize(plain.size());
+        iv = secure_vector<uint8_t>(v, v+sizeof(v));
+        plain = secure_vector<uint8_t>(p, p+sizeof(p));
+        cipher.resize(plain.size());
     }
 
     enc.set_key(key);
