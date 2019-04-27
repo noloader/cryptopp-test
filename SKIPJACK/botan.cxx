@@ -1,6 +1,6 @@
 // Botan program to generate test vectors. Compile with GCC in the Botan directory.
 // Note: Botan removed SKIPJACK at 1.11.8. Checkout 1.11.7 and then build the library.
-// g++ -I build/include/ -I build/include/botan test.cxx ./libbotan-1.11.a -o test.exe
+// g++ -I build/include/ -I build/include/botan botan.cxx ./libbotan-1.11.a -o botan.exe
 
 #include "auto_rng.h"
 #include "skipjack.h"
@@ -37,7 +37,7 @@ void GenerateECBTest(size_t plainLen)
 
     if (count == 0)
     {
-		// NIST test vector
+        // NIST test vector
         const uint8_t k[] = { 0x80, 0,0,0,0,0,0,0,0,0 };
         const uint8_t p[] = { 0,0,0,0 ,0,0,0,0 };
 
@@ -45,7 +45,7 @@ void GenerateECBTest(size_t plainLen)
         plain = secure_vector<uint8_t>(p, p+sizeof(p));
         cipher.resize(plain.size());
     }
-	else if (count == 1)
+    else if (count == 1)
     {
         const uint8_t k[] = { 0x00, 0x99, 0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11 };
         const uint8_t p[] = { 0x33, 0x22, 0x11, 0x00, 0xdd, 0xcc, 0xbb, 0xaa };
@@ -94,17 +94,17 @@ void GenerateCBCTest(size_t plainLen)
 
     if (count == 0)
     {
-		// NIST test vector
+        // NIST test vector
         const uint8_t k[] = { 0x80, 0,0,0,0,0,0,0,0,0 };
         const uint8_t v[] = { 0,0,0,0 ,0,0,0,0 };
-		const uint8_t p[] = { 0,0,0,0 ,0,0,0,0 };
+        const uint8_t p[] = { 0,0,0,0 ,0,0,0,0 };
 
         key = secure_vector<uint8_t>(k, k+sizeof(k));
         iv = secure_vector<uint8_t>(v, v+sizeof(v));
         plain = secure_vector<uint8_t>(p, p+sizeof(p));
         cipher.resize(plain.size());
     }
-	else if (count == 1)
+    else if (count == 1)
     {
         const uint8_t k[] = { 0x00, 0x99, 0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11 };
         const uint8_t v[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -150,7 +150,7 @@ int main()
         }
     }
 
-	std::cout << std::endl;
+    std::cout << std::endl;
 
     for (size_t i=8; i<128; i+=8)
     {
@@ -160,5 +160,5 @@ int main()
         }
     }
 
-	std::cout << std::endl;
+    std::cout << std::endl;
 }
