@@ -21,7 +21,7 @@
 #define GF_128_FDBK       0x87
 #define AES_KEY_BYTES     16
 #define AES_BLK_BYTES     16
-#define DEV_BLK_BYTES     16
+#define DEV_BLK_BYTES     32
 
 // C++
 typedef uint64_t u64b;
@@ -29,11 +29,10 @@ typedef uint8_t  u08b;
 typedef uint32_t uint;
 
 typedef u08b AES_Key[AES_KEY_BYTES];
-typedef u08b Msg[DEV_BLK_BYTES];
 
 using EVP_CIPHER_CTX_ptr = std::unique_ptr<EVP_CIPHER_CTX, decltype(&::EVP_CIPHER_CTX_free)>;
 
-void AES_ECB_Encrypt(const AES_Key key, Msg msg)
+void AES_ECB_Encrypt(const AES_Key key, u08b* data, size_t size)
 {
     const EVP_CIPHER *cipher = (AES_KEY_BYTES+0 == 16) ? EVP_aes_128_ecb() : EVP_aes_256_ecb();
 
@@ -47,14 +46,14 @@ void AES_ECB_Encrypt(const AES_Key key, Msg msg)
     if (rc != 1)
         throw std::runtime_error("EVP_CIPHER_CTX_set_padding failed");
 
-    int out_len1 = sizeof(Msg);
+    int out_len1 = size;
 
-    rc = EVP_EncryptUpdate(ctx.get(), msg, &out_len1, msg, sizeof(Msg));
+    rc = EVP_EncryptUpdate(ctx.get(), data, &out_len1, data, size);
     if (rc != 1)
         throw std::runtime_error("EVP_EncryptUpdate failed");
 
     int out_len2 = 0;
-    rc = EVP_EncryptFinal_ex(ctx.get(), msg+out_len1, &out_len2);
+    rc = EVP_EncryptFinal_ex(ctx.get(), data+out_len1, &out_len2);
     if (rc != 1)
         throw std::runtime_error("EVP_EncryptFinal_ex failed");
 }
@@ -83,16 +82,16 @@ void XTS_EncryptSector
         T[j] = (u08b) (S & 0xFF);
         S    = S >> 8;              // also note that T[] is padded with zeroes
     }
-    AES_ECB_Encrypt(k2,T);          // encrypt the tweak
+    AES_ECB_Encrypt(k2,T,sizeof(T));   // encrypt the tweak
 
-    for (i=0;i<N;i+=AES_BLK_BYTES)  // now encrypt the data unit, AES_BLK_BYTES at a time
+    for (i=0;i<N;i+=AES_BLK_BYTES)     // now encrypt the data unit, AES_BLK_BYTES at a time
     {
         // merge the tweak into the input block
         for (j=0;j<AES_BLK_BYTES;j++)
             x[j] = pt[i+j] ^ T[j];
 
         // encrypt one block
-        AES_ECB_Encrypt(k1,x);
+        AES_ECB_Encrypt(k1,x,sizeof(x));
 
         // merge the tweak into the output block
         for (j=0;j<AES_BLK_BYTES;j++)
@@ -113,18 +112,18 @@ void XTS_EncryptSector
 
 /////////////////////////////////////////////////////////////////////
 
-std::string Print(const Msg msg)
+std::string Print(const u08b* data, size_t size)
 {
     std::ostringstream oss;
-    for (size_t i=0; i<sizeof(Msg); ++i)
+    for (size_t i=0; i<size; ++i)
     {
-        oss << std::hex << std::setfill('0') << std::setw(2) << (unsigned int)msg[i];
+        oss << std::hex << std::setfill('0') << std::setw(2) << (unsigned int)data[i];
     }
 
     return oss.str();
 }
 
-const char tdata[] = "0123456789abcdef";
+const char tdata[] = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 const char tkey [] = "0123456789abcdeffedcba9876543210";
 
 int main (int argc, char* argv[])
@@ -132,20 +131,25 @@ int main (int argc, char* argv[])
     EVP_add_cipher(EVP_aes_128_ecb());
     EVP_add_cipher(EVP_aes_256_ecb());
 
-    Msg msg;
-    memcpy(msg, tdata, DEV_BLK_BYTES);
+	// AES/XTS applied for a data unit of 32 bytes, 32 bytes key material.
+	// IEEE 1619, Appendix B, Vector 1
+
+    u08b msg[DEV_BLK_BYTES];
+    memset(msg, 0, sizeof(msg));
 
     AES_Key k1, k2;
-    memcpy(k1, tkey+ 0, AES_KEY_BYTES);
-    memcpy(k2, tkey+16, AES_KEY_BYTES);
+    memset(k1, 0, AES_KEY_BYTES);
+    memset(k2, 0, AES_KEY_BYTES);
 
-    const u64b S = 1;
+    const u64b S = 0;
 
-    std::cout << "Plain:  " << Print(msg) << std::endl;
+    std::cout << "Plain:  " << Print(msg, sizeof(msg)) << std::endl;
 
     XTS_EncryptSector(k2, k1, S, DEV_BLK_BYTES, msg, msg);
 
-    std::cout << "Cipher: " << Print(msg) << std::endl;
+    std::cout << "Cipher: " << Print(msg, sizeof(msg)) << std::endl;
+	
+	std::cout << "Expect: " << "917cf69ebd68b2ec9b9fe9a3eadda692cd43d2f59598ed858c02c2652fbf922e" << std::endl;
 
     return 0;
 }
