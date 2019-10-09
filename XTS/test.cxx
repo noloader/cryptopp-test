@@ -21,7 +21,7 @@
 #define GF_128_FDBK       0x87
 #define AES_KEY_BYTES     16
 #define AES_BLK_BYTES     16
-#define DEV_BLK_BYTES     16
+#define DEV_BLK_BYTES     32
 
 // C++
 typedef uint64_t u64b;
