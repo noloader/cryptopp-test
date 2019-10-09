@@ -62,12 +62,12 @@ void AES_ECB_Encrypt(const AES_Key key, u08b* data, size_t size)
 
 void XTS_EncryptSector
 (
-     AES_Key &k2,                    // key used for tweaking
-     AES_Key &k1,                    // key used for "ECB" encryption
-     u64b  S,                        // data unit number (64 bits)
-     uint  N,                        // sector size, in bytes
-     const u08b *pt,                 // plaintext sector  input data
-     u08b *ct                        // ciphertext sector output data
+    const AES_Key &k2,              // key used for tweaking
+    const AES_Key &k1,              // key used for "ECB" encryption
+    u64b  S,                        // data unit number (64 bits)
+    uint  N,                        // sector size, in bytes
+    const u08b *pt,                 // plaintext sector  input data
+    u08b *ct                        // ciphertext sector output data
 )
 {
     uint    i,j;                    // local counters
@@ -134,12 +134,9 @@ int main (int argc, char* argv[])
 	// AES/XTS applied for a data unit of 32 bytes, 32 bytes key material.
 	// IEEE 1619, Appendix B, Vector 1
 
-    u08b msg[DEV_BLK_BYTES];
-    memset(msg, 0, sizeof(msg));
+    u08b msg[DEV_BLK_BYTES] = {0x00};
 
-    AES_Key k1, k2;
-    memset(k1, 0, AES_KEY_BYTES);
-    memset(k2, 0, AES_KEY_BYTES);
+    const AES_Key k1 = {0x00}, k2 = {0x00};
 
     const u64b S = 0;
 
