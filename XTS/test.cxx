@@ -21,7 +21,7 @@
 #define GF_128_FDBK       0x87
 #define AES_KEY_BYTES     16
 #define AES_BLK_BYTES     16
-#define DEV_BLK_BYTES     32
+#define DEV_BLK_BYTES     16
 
 // C++
 typedef uint64_t u64b;
@@ -46,16 +46,27 @@ void AES_ECB_Encrypt(const AES_Key key, u08b* data, size_t size)
     if (rc != 1)
         throw std::runtime_error("EVP_CIPHER_CTX_set_padding failed");
 
-    int out_len1 = size;
+    int out_len1 = (int)size;
 
     rc = EVP_EncryptUpdate(ctx.get(), data, &out_len1, data, size);
     if (rc != 1)
         throw std::runtime_error("EVP_EncryptUpdate failed");
 
-    int out_len2 = 0;
+    int out_len2 = (int)(size-out_len1);
     rc = EVP_EncryptFinal_ex(ctx.get(), data+out_len1, &out_len2);
     if (rc != 1)
         throw std::runtime_error("EVP_EncryptFinal_ex failed");
+}
+
+std::string Print(const u08b* data, size_t size)
+{
+    std::ostringstream oss;
+    for (size_t i=0; i<size; ++i)
+    {
+        oss << std::hex << std::setfill('0') << std::setw(2) << (unsigned int)data[i];
+    }
+
+    return oss.str();
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -111,17 +122,6 @@ void XTS_EncryptSector
 }
 
 /////////////////////////////////////////////////////////////////////
-
-std::string Print(const u08b* data, size_t size)
-{
-    std::ostringstream oss;
-    for (size_t i=0; i<size; ++i)
-    {
-        oss << std::hex << std::setfill('0') << std::setw(2) << (unsigned int)data[i];
-    }
-
-    return oss.str();
-}
 
 int main (int argc, char* argv[])
 {

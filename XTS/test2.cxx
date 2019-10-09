@@ -46,24 +46,35 @@ void AES_ECB_Encrypt(const AES_Key key, u08b* data, size_t size)
     if (rc != 1)
         throw std::runtime_error("EVP_CIPHER_CTX_set_padding failed");
 
-    int out_len1 = size;
+    int out_len1 = (int)size;
 
     rc = EVP_EncryptUpdate(ctx.get(), data, &out_len1, data, size);
     if (rc != 1)
         throw std::runtime_error("EVP_EncryptUpdate failed");
 
-    int out_len2 = 0;
+    int out_len2 = (int)(size-out_len1);
     rc = EVP_EncryptFinal_ex(ctx.get(), data+out_len1, &out_len2);
     if (rc != 1)
         throw std::runtime_error("EVP_EncryptFinal_ex failed");
+}
+
+std::string Print(const u08b* data, size_t size)
+{
+    std::ostringstream oss;
+    for (size_t i=0; i<size; ++i)
+    {
+        oss << std::hex << std::setfill('0') << std::setw(2) << (unsigned int)data[i];
+    }
+
+    return oss.str();
 }
 
 /////////////////////////////////////////////////////////////////////
 
 void XTS_EncryptSector
 (
-    AES_Key &k2,                    // key used for generating sector "tweak"
-    AES_Key &k1,                    // key used for "ECB" encryption
+    const AES_Key &k2,              // key used for tweaking
+    const AES_Key &k1,              // key used for "ECB" encryption
     u64b  S,                        // sector number (64 bits)
     uint  N,                        // sector size, in bytes
     const u08b *pt,                 //  plaintext sector  input data
@@ -118,12 +129,11 @@ void XTS_EncryptSector
             x[j] = pt[i+j] ^ T[j];           // copy in the final plaintext bytes
             ct[i+j] = ct[i+j-AES_BLK_BYTES]; // and copy out the final ciphertext bytes
         }
-
         for (;j<AES_BLK_BYTES;j++)           // "steal" ciphertext to complete the block
             x[j] = ct[i+j-AES_BLK_BYTES] ^ T[j];
 
         // encrypt the final block
-        AES_ECB_Encrypt(k1,x, sizeof(x));
+        AES_ECB_Encrypt(k1,x,sizeof(x));
 
         // merge the tweak into the output block
         for (j=0;j<AES_BLK_BYTES;j++)
@@ -133,39 +143,61 @@ void XTS_EncryptSector
 
 /////////////////////////////////////////////////////////////////////
 
-std::string Print(const u08b* data, size_t size)
-{
-    std::ostringstream oss;
-    for (size_t i=0; i<size; ++i)
-    {
-        oss << std::hex << std::setfill('0') << std::setw(2) << (unsigned int)data[i];
-    }
-
-    return oss.str();
-}
-
-const char tdata[] = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-const char tkey [] = "0123456789abcdeffedcba9876543210";
-
 int main (int argc, char* argv[])
 {
     EVP_add_cipher(EVP_aes_128_ecb());
     EVP_add_cipher(EVP_aes_256_ecb());
 
-    u08b msg[DEV_BLK_BYTES];
-    memcpy(msg, tdata, sizeof(msg));
+#if 1
+    // AES/XTS applied for a data unit of 16 bytes, 16 bytes key material.
+    // IEEE 1619, Appendix B, Vector 15
+    const u08b pt[DEV_BLK_BYTES*2] = {
+        0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f,0x10
+    };
 
-    AES_Key k1, k2;
-    memcpy(k1, tkey+ 0, AES_KEY_BYTES);
-    memcpy(k2, tkey+16, AES_KEY_BYTES);
+    u08b ct[DEV_BLK_BYTES*2];
 
-    const u64b S = 1;
+    const AES_Key k1 = {
+        0xff,0xfe,0xfd,0xfc,0xfb,0xfa,0xf9,0xf8,0xf7,0xf6,0xf5,0xf4,0xf3,0xf2,0xf1,0xf0
+    };
 
-    std::cout << "Plain:  " << Print(msg, sizeof(msg)) << std::endl;
+    const AES_Key k2 = {
+        0xbf,0xbe,0xbd,0xbc,0xbb,0xba,0xb9,0xb8,0xb7,0xb6,0xb5,0xb4,0xb3,0xb2,0xb1,0xb0
+    };
 
-    XTS_EncryptSector(k2, k1, S, DEV_BLK_BYTES, msg, msg);
+    const u64b S = 0x9a78563412;
+    const size_t len = 17;
+#endif
 
-    std::cout << "Cipher: " << Print(msg, sizeof(msg)) << std::endl;
+#if 0
+    // IEEE 1619, Appendix B, Vector 16
+    const u08b pt[DEV_BLK_BYTES*2] = {
+        0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f,0x10,0x11
+    };
+
+    u08b ct[DEV_BLK_BYTES*2];
+
+    const AES_Key k1 = {
+        0xff,0xfe,0xfd,0xfc,0xfb,0xfa,0xf9,0xf8,0xf7,0xf6,0xf5,0xf4,0xf3,0xf2,0xf1,0xf0
+    };
+
+    const AES_Key k2 = {
+        0xbf,0xbe,0xbd,0xbc,0xbb,0xba,0xb9,0xb8,0xb7,0xb6,0xb5,0xb4,0xb3,0xb2,0xb1,0xb0
+    };
+
+    const u64b S = 0x9a78563412;
+    const size_t len = 18;
+#endif
+
+    std::cout << "Plain:  " << Print(pt, len) << std::endl;
+
+    XTS_EncryptSector(k2, k1, S, len, pt, ct);
+
+    std::cout << "Cipher: " << Print(ct, len) << std::endl;
+
+    std::cout << "Expect: " << "6c1625db4671522d3d7599601de7ca09ed" << std::endl;
+
+    // std::cout << "Expect: " << "d069444b7a7e0cab09e24447d24deb1fedbf" << std::endl;
 
     return 0;
 }
