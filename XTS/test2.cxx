@@ -197,8 +197,10 @@ int main (int argc, char* argv[])
 
     std::cout << "Cipher: " << Print(ct, len) << std::endl;
 
+    // len = 17
     std::cout << "Expect: " << "6c1625db4671522d3d7599601de7ca09ed" << std::endl;
 
+    // len = 18
     // std::cout << "Expect: " << "d069444b7a7e0cab09e24447d24deb1fedbf" << std::endl;
 
     return 0;

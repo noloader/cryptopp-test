@@ -12,6 +12,7 @@ int main (int argc, char* argv[])
 {
     using namespace Botan;
 
+    // IEEE 1619, Appendix B, Vector 1
     {
         secure_vector<uint8_t> key(32);
         secure_vector<uint8_t>  iv(16);
@@ -33,6 +34,7 @@ int main (int argc, char* argv[])
         std::cout << "Cipher: " << hex_encode(ct) << "\n";
     }
 
+    // IEEE 1619, Appendix B, Vector 15
     {
         secure_vector<uint8_t> key = {
             0xff,0xfe,0xfd,0xfc,0xfb,0xfa,0xf9,0xf8,0xf7,0xf6,0xf5,0xf4,0xf3,0xf2,0xf1,0xf0,
