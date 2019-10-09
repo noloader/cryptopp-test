@@ -35,26 +35,28 @@ using EVP_CIPHER_CTX_ptr = std::unique_ptr<EVP_CIPHER_CTX, decltype(&::EVP_CIPHE
 
 void AES_ECB_Encrypt(const AES_Key key, Msg msg)
 {
-    EVP_CIPHER_CTX_ptr ctx(EVP_CIPHER_CTX_new(), ::EVP_CIPHER_CTX_free);
-    int rc = EVP_EncryptInit_ex(ctx.get(), EVP_aes_128_ecb(), NULL, key, NULL);
-    if (rc != 1)
-      throw std::runtime_error("EVP_EncryptInit_ex failed");
+    const EVP_CIPHER *cipher = (AES_KEY_BYTES+0 == 16) ? EVP_aes_128_ecb() : EVP_aes_256_ecb();
 
-	#define NOPADDING 0
-	rc = EVP_CIPHER_CTX_set_padding(ctx.get(), NOPADDING);
+    EVP_CIPHER_CTX_ptr ctx(EVP_CIPHER_CTX_new(), ::EVP_CIPHER_CTX_free);
+    int rc = EVP_EncryptInit_ex(ctx.get(), cipher, NULL, key, NULL);
     if (rc != 1)
-      throw std::runtime_error("EVP_CIPHER_CTX_set_padding failed");
+        throw std::runtime_error("EVP_EncryptInit_ex failed");
+
+    #define NOPADDING 0
+    rc = EVP_CIPHER_CTX_set_padding(ctx.get(), NOPADDING);
+    if (rc != 1)
+        throw std::runtime_error("EVP_CIPHER_CTX_set_padding failed");
 
     int out_len1 = sizeof(Msg);
 
     rc = EVP_EncryptUpdate(ctx.get(), msg, &out_len1, msg, sizeof(Msg));
     if (rc != 1)
-      throw std::runtime_error("EVP_EncryptUpdate failed");
+        throw std::runtime_error("EVP_EncryptUpdate failed");
 
     int out_len2 = 0;
     rc = EVP_EncryptFinal_ex(ctx.get(), msg+out_len1, &out_len2);
     if (rc != 1)
-      throw std::runtime_error("EVP_EncryptFinal_ex failed");
+        throw std::runtime_error("EVP_EncryptFinal_ex failed");
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -109,15 +111,17 @@ void XTS_EncryptSector
     }
 }
 
+/////////////////////////////////////////////////////////////////////
+
 std::string Print(const Msg msg)
 {
-	std::ostringstream oss;
-	for (size_t i=0; i<sizeof(Msg); ++i)
-	{
-		oss << std::hex << std::setfill('0') << std::setw(2) << (unsigned int)msg[i];
-	}
+    std::ostringstream oss;
+    for (size_t i=0; i<sizeof(Msg); ++i)
+    {
+        oss << std::hex << std::setfill('0') << std::setw(2) << (unsigned int)msg[i];
+    }
 
-	return oss.str();
+    return oss.str();
 }
 
 const char tdata[] = "0123456789abcdef";
@@ -128,20 +132,20 @@ int main (int argc, char* argv[])
     EVP_add_cipher(EVP_aes_128_ecb());
     EVP_add_cipher(EVP_aes_256_ecb());
 
-	Msg msg;
-	memcpy(msg, tdata, DEV_BLK_BYTES);
+    Msg msg;
+    memcpy(msg, tdata, DEV_BLK_BYTES);
 
-	AES_Key k1, k2;
-	memcpy(k1, tkey+ 0, AES_KEY_BYTES);
-	memcpy(k2, tkey+16, AES_KEY_BYTES);
+    AES_Key k1, k2;
+    memcpy(k1, tkey+ 0, AES_KEY_BYTES);
+    memcpy(k2, tkey+16, AES_KEY_BYTES);
 
-	const u64b S = 1;
+    const u64b S = 1;
 
-	std::cout << "Plain: " << Print(msg) << std::endl;
+    std::cout << "Plain:  " << Print(msg) << std::endl;
 
-	XTS_EncryptSector(k2, k1, S, DEV_BLK_BYTES, msg, msg);
+    XTS_EncryptSector(k2, k1, S, DEV_BLK_BYTES, msg, msg);
 
-	std::cout << "Cipher: " << Print(msg) << std::endl;
+    std::cout << "Cipher: " << Print(msg) << std::endl;
 
-	return 0;
+    return 0;
 }
