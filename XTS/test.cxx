@@ -123,30 +123,27 @@ std::string Print(const u08b* data, size_t size)
     return oss.str();
 }
 
-const char tdata[] = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
-const char tkey [] = "0123456789abcdeffedcba9876543210";
-
 int main (int argc, char* argv[])
 {
     EVP_add_cipher(EVP_aes_128_ecb());
     EVP_add_cipher(EVP_aes_256_ecb());
 
-	// AES/XTS applied for a data unit of 32 bytes, 32 bytes key material.
-	// IEEE 1619, Appendix B, Vector 1
+    // AES/XTS applied for a data unit of 32 bytes, 32 bytes key material.
+    // IEEE 1619, Appendix B, Vector 1
 
-    u08b msg[DEV_BLK_BYTES] = {0x00};
+    u08b pt[DEV_BLK_BYTES] = {0x00};
+    u08b ct[DEV_BLK_BYTES];
 
     const AES_Key k1 = {0x00}, k2 = {0x00};
-
     const u64b S = 0;
 
-    std::cout << "Plain:  " << Print(msg, sizeof(msg)) << std::endl;
+    std::cout << "Plain:  " << Print(pt, sizeof(pt)) << std::endl;
 
-    XTS_EncryptSector(k2, k1, S, DEV_BLK_BYTES, msg, msg);
+    XTS_EncryptSector(k2, k1, S, DEV_BLK_BYTES, pt, ct);
 
-    std::cout << "Cipher: " << Print(msg, sizeof(msg)) << std::endl;
-	
-	std::cout << "Expect: " << "917cf69ebd68b2ec9b9fe9a3eadda692cd43d2f59598ed858c02c2652fbf922e" << std::endl;
+    std::cout << "Cipher: " << Print(ct, sizeof(ct)) << std::endl;
+
+    std::cout << "Expect: " << "917cf69ebd68b2ec9b9fe9a3eadda692cd43d2f59598ed858c02c2652fbf922e" << std::endl;
 
     return 0;
 }
