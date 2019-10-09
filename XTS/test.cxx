@@ -73,8 +73,8 @@ std::string Print(const u08b* data, size_t size)
 
 void XTS_EncryptSector
 (
-    const AES_Key &k2,              // key used for tweaking
-    const AES_Key &k1,              // key used for "ECB" encryption
+    const AES_Key k2,               // key used for tweaking
+    const AES_Key k1,               // key used for "ECB" encryption
     u64b  S,                        // data unit number (64 bits)
     uint  N,                        // sector size, in bytes
     const u08b *pt,                 // plaintext sector  input data
