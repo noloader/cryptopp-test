@@ -151,11 +151,13 @@ int main (int argc, char* argv[])
 #if 1
     // AES/XTS applied for a data unit of 16 bytes, 16 bytes key material.
     // IEEE 1619, Appendix B, Vector 15
-    const u08b pt[ROUNDUP_BYTES(17)] = {
+    const size_t len = 17;
+
+    const u08b pt[ROUNDUP_BYTES(len)] = {
         0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f,0x10
     };
 
-    u08b ct[ROUNDUP_BYTES(17)];
+    u08b ct[ROUNDUP_BYTES(len)];
 
     const AES_Key k1 = {
         0xff,0xfe,0xfd,0xfc,0xfb,0xfa,0xf9,0xf8,0xf7,0xf6,0xf5,0xf4,0xf3,0xf2,0xf1,0xf0
@@ -167,11 +169,12 @@ int main (int argc, char* argv[])
 
     // const u64b S = 0x9a78563412;
     const u64b S = 0x123456789a;
-    const size_t len = 17;
 #endif
 
 #if 0
     // IEEE 1619, Appendix B, Vector 16
+    const size_t len = 18;
+
     const u08b pt[ROUNDUP_BYTES(18)] = {
         0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f,0x10,0x11
     };
@@ -188,7 +191,6 @@ int main (int argc, char* argv[])
 
     // const u64b S = 0x9a78563412;
     const u64b S = 0x123456789a;
-    const size_t len = 18;
 #endif
 
     std::cout << "Plain:  " << Print(pt, len) << std::endl;
@@ -197,11 +199,10 @@ int main (int argc, char* argv[])
 
     std::cout << "Cipher: " << Print(ct, len) << std::endl;
 
-    // len = 17
-    std::cout << "Expect: " << "6c1625db4671522d3d7599601de7ca09ed" << std::endl;
-
-    // len = 18
-    // std::cout << "Expect: " << "d069444b7a7e0cab09e24447d24deb1fedbf" << std::endl;
+    if (len == 17)
+        std::cout << "Expect: " << "6c1625db4671522d3d7599601de7ca09ed" << std::endl;
+    else if (len == 18)
+        std::cout << "Expect: " << "d069444b7a7e0cab09e24447d24deb1fedbf" << std::endl;
 
     return 0;
 }

@@ -131,17 +131,18 @@ int main (int argc, char* argv[])
     // AES/XTS applied for a data unit of 32 bytes, 32 bytes key material.
     // IEEE 1619, Appendix B, Vector 1
 
-    u08b pt[ROUNDUP_BYTES(32)] = {0x00};
-    u08b ct[ROUNDUP_BYTES(32)];
+    const size_t len = 32;
+    u08b pt[ROUNDUP_BYTES(len)] = {0x00};
+    u08b ct[ROUNDUP_BYTES(len)];
 
     const AES_Key k1 = {0x00}, k2 = {0x00};
     const u64b S = 0;
 
-    std::cout << "Plain:  " << Print(pt, 32) << std::endl;
+    std::cout << "Plain:  " << Print(pt, len) << std::endl;
 
-    XTS_EncryptSector(k2, k1, S, 32, pt, ct);
+    XTS_EncryptSector(k2, k1, S, len, pt, ct);
 
-    std::cout << "Cipher: " << Print(ct, 32) << std::endl;
+    std::cout << "Cipher: " << Print(ct, len) << std::endl;
 
     std::cout << "Expect: " << "917cf69ebd68b2ec9b9fe9a3eadda692cd43d2f59598ed858c02c2652fbf922e" << std::endl;
 
