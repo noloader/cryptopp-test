@@ -84,17 +84,6 @@ void AES_ECB_Decrypt(const AES_Key key, u08b* data, size_t size)
         throw std::runtime_error("EVP_DecryptFinal_ex failed");
 }
 
-std::string Print(const u08b* data, size_t size)
-{
-    std::ostringstream oss;
-    for (size_t i=0; i<size; ++i)
-    {
-        oss << std::hex << std::setfill('0') << std::setw(2) << (unsigned int)data[i];
-    }
-
-    return oss.str();
-}
-
 void GF_Multiply(u08b* T)
 {
     u08b Cin, Cout;
@@ -110,6 +99,17 @@ void GF_Multiply(u08b* T)
 
     if (Cout)
         T[0] ^= GF_128_FDBK;
+}
+
+std::string Print(const u08b* data, size_t size)
+{
+    std::ostringstream oss;
+    for (size_t i=0; i<size; ++i)
+    {
+        oss << std::hex << std::setfill('0') << std::setw(2) << (unsigned int)data[i];
+    }
+
+    return oss.str();
 }
 
 /////////////////////////////////////////////////////////////////////
