@@ -173,8 +173,8 @@ void XTS_DecryptSector
     const AES_Key k1,               // key used for "ECB" encryption
     u64b  S,                        // sector number (64 bits)
     uint  N,                        // sector size, in bytes
-    const u08b *pt,                 //  plaintext sector  input data
-    u08b *ct                        // ciphertext sector output data
+    const u08b *ct,                 // ciphertext sector output data
+    u08b *pt                        //  plaintext sector  input data
 )
 {
     uint    i,j;                    // local counters
@@ -196,14 +196,14 @@ void XTS_DecryptSector
     {
         // merge the tweak into the input block
         for (j=0;j<AES_BLK_BYTES;j++)
-            x[j] = pt[i+j] ^ T[j];
+            x[j] = ct[i+j] ^ T[j];
 
         // encrypt one block
         AES_ECB_Decrypt(k1,x,sizeof(x));
 
         // merge the tweak into the output block
         for (j=0;j<AES_BLK_BYTES;j++)
-            ct[i+j] = x[j] ^ T[j];
+            pt[i+j] = x[j] ^ T[j];
 
         // LFSR "shift" the tweak value for the next location
         Cin = 0;
@@ -222,18 +222,18 @@ void XTS_DecryptSector
     {
         for (j=0;i+j<N;j++)
         {
-            x[j] = pt[i+j] ^ T[j];           // copy in the final plaintext bytes
-            ct[i+j] = ct[i+j-AES_BLK_BYTES]; // and copy out the final ciphertext bytes
+            x[j] = ct[i+j] ^ T[j];           // copy in the final plaintext bytes
+            pt[i+j] = pt[i+j-AES_BLK_BYTES]; // and copy out the final ciphertext bytes
         }
         for (;j<AES_BLK_BYTES;j++)           // "steal" ciphertext to complete the block
-            x[j] = ct[i+j-AES_BLK_BYTES] ^ T[j];
+            x[j] = pt[i+j-AES_BLK_BYTES] ^ T[j];
 
         // encrypt the final block
         AES_ECB_Decrypt(k1,x,sizeof(x));
 
         // merge the tweak into the output block
         for (j=0;j<AES_BLK_BYTES;j++)
-            ct[i+j-AES_BLK_BYTES] = x[j] ^ T[j];
+            pt[i+j-AES_BLK_BYTES] = x[j] ^ T[j];
     }
 }
 
