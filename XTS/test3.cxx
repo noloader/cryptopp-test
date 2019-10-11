@@ -95,6 +95,23 @@ std::string Print(const u08b* data, size_t size)
     return oss.str();
 }
 
+void GF_Multiply(u08b* T)
+{
+    u08b Cin, Cout;
+    uint j;
+
+    Cin = 0;
+    for (j=0;j<AES_BLK_BYTES;j++)
+    {
+        Cout =  (T[j] >> 7) & 1;
+        T[j] = ((T[j] << 1) + Cin) & 0xFF;
+        Cin  =  Cout;
+    }
+
+    if (Cout)
+        T[0] ^= GF_128_FDBK;
+}
+
 /////////////////////////////////////////////////////////////////////
 
 void XTS_EncryptSector
@@ -110,7 +127,6 @@ void XTS_EncryptSector
     uint    i,j;                    // local counters
     u08b    T[AES_BLK_BYTES];       // tweak value
     u08b    x[AES_BLK_BYTES];       // local work value
-    u08b    Cin,Cout;               // "carry" bits for LFSR shifting
 
     assert(N >= AES_BLK_BYTES);     // need at least a full AES block
 
@@ -136,16 +152,7 @@ void XTS_EncryptSector
             ct[i+j] = x[j] ^ T[j];
 
         // LFSR "shift" the tweak value for the next location
-        Cin = 0;
-        for (j=0;j<AES_BLK_BYTES;j++)
-        {
-            Cout =  (T[j] >> 7) & 1;
-            T[j] = ((T[j] << 1) + Cin) & 0xFF;
-            Cin  =  Cout;
-        }
-
-        if (Cout)
-            T[0] ^= GF_128_FDBK;
+        GF_Multiply(T);
     }
 
     if (i < N)                               // is there a final partial block to handle?
@@ -180,7 +187,6 @@ void XTS_DecryptSector
     uint    i,j;                    // local counters
     u08b    T[AES_BLK_BYTES];       // tweak value
     u08b    x[AES_BLK_BYTES];       // local work value
-    u08b    Cin,Cout;               // "carry" bits for LFSR shifting
 
     assert(N >= AES_BLK_BYTES);     // need at least a full AES block
 
@@ -206,16 +212,7 @@ void XTS_DecryptSector
             pt[i+j] = x[j] ^ T[j];
 
         // LFSR "shift" the tweak value for the next location
-        Cin = 0;
-        for (j=0;j<AES_BLK_BYTES;j++)
-        {
-            Cout =  (T[j] >> 7) & 1;
-            T[j] = ((T[j] << 1) + Cin) & 0xFF;
-            Cin  =  Cout;
-        }
-
-        if (Cout)
-            T[0] ^= GF_128_FDBK;
+        GF_Multiply(T);
     }
 
     if (i < N)                               // is there a final partial block to handle?
