@@ -274,7 +274,7 @@ int main (int argc, char* argv[])
 
     std::cout << "Expect: " << "6c1625db4671522d3d7599601de7ca09ed" << std::endl;
 
-    XTS_EncryptSector(k2, k1, S, len, ct, rt);
+    XTS_DecryptSector(k2, k1, S, len, ct, rt);
 
     std::cout << "Plain:  " << Print(rt, len) << std::endl;
 
