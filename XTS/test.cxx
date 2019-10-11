@@ -58,6 +58,23 @@ void AES_ECB_Encrypt(const AES_Key key, u08b* data, size_t size)
         throw std::runtime_error("EVP_EncryptFinal_ex failed");
 }
 
+void GF_Multiply(u08b* T)
+{
+    u08b Cin, Cout;
+    uint j;
+
+    Cin = 0;
+    for (j=0;j<AES_BLK_BYTES;j++)
+    {
+        Cout =  (T[j] >> 7) & 1;
+        T[j] = ((T[j] << 1) + Cin) & 0xFF;
+        Cin  =  Cout;
+    }
+
+    if (Cout)
+        T[0] ^= GF_128_FDBK;
+}
+
 std::string Print(const u08b* data, size_t size)
 {
     std::ostringstream oss;
@@ -109,15 +126,7 @@ void XTS_EncryptSector
             ct[i+j] = x[j] ^ T[j];
 
         // Multiply T by α
-        Cin = 0;
-        for (j=0;j<AES_BLK_BYTES;j++)
-        {
-            Cout =  (T[j] >> 7) & 1;
-            T[j] = ((T[j] << 1) + Cin) & 0xFF;
-            Cin  =  Cout;
-        }
-        if (Cout)
-            T[0] ^= GF_128_FDBK;
+        GF_Multiply(T);
     }
 }
 
