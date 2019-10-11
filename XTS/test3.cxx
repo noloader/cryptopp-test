@@ -106,6 +106,8 @@ std::string Print(const u08b* data, size_t size)
     std::ostringstream oss;
     for (size_t i=0; i<size; ++i)
     {
+        if (i != 0 && i%16 == 0)
+            oss << " ";
         oss << std::hex << std::setfill('0') << std::setw(2) << (unsigned int)data[i];
     }
 
@@ -129,6 +131,7 @@ void XTS_EncryptSector
     u08b    x[AES_BLK_BYTES];       // local work value
 
     assert(N >= AES_BLK_BYTES);     // need at least a full AES block
+    memset(ct, 0, N);
 
     for (j=0;j<AES_BLK_BYTES;j++)
     {                               // convert sector number to tweak plaintext
@@ -159,14 +162,23 @@ void XTS_EncryptSector
     {
         for (j=0;i+j<N;j++)
         {
-            x[j] = pt[i+j] ^ T[j];           // copy in the final plaintext bytes
+            x[j] = pt[i+j];           // copy in the final plaintext bytes
             ct[i+j] = ct[i+j-AES_BLK_BYTES]; // and copy out the final ciphertext bytes
         }
         for (;j<AES_BLK_BYTES;j++)           // "steal" ciphertext to complete the block
-            x[j] = ct[i+j-AES_BLK_BYTES] ^ T[j];
+            x[j] = ct[i+j-AES_BLK_BYTES];
+
+        std::cout << "x1:" << Print(x, 16) << std::endl;
+
+        for (j=0;j<AES_BLK_BYTES;j++)
+            x[j] ^= T[j];
+
+        std::cout << "x2:" << Print(x, 16) << std::endl;
 
         // encrypt the final block
         AES_ECB_Encrypt(k1,x,sizeof(x));
+
+        std::cout << "x3:" << Print(x, 16) << std::endl;
 
         // merge the tweak into the output block
         for (j=0;j<AES_BLK_BYTES;j++)
@@ -189,6 +201,7 @@ void XTS_DecryptSector
     u08b    x[AES_BLK_BYTES];       // local work value
 
     assert(N >= AES_BLK_BYTES);     // need at least a full AES block
+    memset(pt, 0, N);
 
     for (j=0;j<AES_BLK_BYTES;j++)
     {                               // convert sector number to tweak plaintext
@@ -217,6 +230,7 @@ void XTS_DecryptSector
 
     if (i < N)                               // is there a final partial block to handle?
     {
+#if 0
         for (j=0;i+j<N;j++)
         {
             x[j] = ct[i+j] ^ T[j];           // copy in the final plaintext bytes
@@ -231,6 +245,29 @@ void XTS_DecryptSector
         // merge the tweak into the output block
         for (j=0;j<AES_BLK_BYTES;j++)
             pt[i+j-AES_BLK_BYTES] = x[j] ^ T[j];
+#endif
+
+        for (j=0;j<AES_BLK_BYTES;j++)
+            x[j] = ct[i+j-AES_BLK_BYTES] ^ T[j];
+
+        std::cout << "x3: " << Print(x, 16) << std::endl;
+
+        AES_ECB_Decrypt(k1,x,sizeof(x));
+
+        std::cout << "x2: " << Print(x, 16) << std::endl;
+
+        for (j=0;j<AES_BLK_BYTES;j++)
+            x[j] ^= T[j];
+
+        std::cout << "x1: " << Print(x, 16) << std::endl;
+
+        //for (j=0;i+j<N;j++)
+        //{
+        //    x[j] = ct[i+j] ^ T[j];           // copy in the final plaintext bytes
+        //    pt[i+j] = pt[i+j-AES_BLK_BYTES]; // and copy out the final ciphertext bytes
+        //}
+        //for (;j<AES_BLK_BYTES;j++)           // "steal" ciphertext to complete the block
+        //    x[j] = pt[i+j-AES_BLK_BYTES] ^ T[j];
     }
 }
 
