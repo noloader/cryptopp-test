@@ -168,17 +168,17 @@ void XTS_EncryptSector
         for (;j<AES_BLK_BYTES;j++)           // "steal" ciphertext to complete the block
             x[j] = ct[i+j-AES_BLK_BYTES];
 
-        std::cout << "x1:" << Print(x, 16) << std::endl;
+        std::cout << "x1: " << Print(x, 16) << std::endl;
 
         for (j=0;j<AES_BLK_BYTES;j++)
             x[j] ^= T[j];
 
-        std::cout << "x2:" << Print(x, 16) << std::endl;
+        std::cout << "x2: " << Print(x, 16) << std::endl;
 
         // encrypt the final block
         AES_ECB_Encrypt(k1,x,sizeof(x));
 
-        std::cout << "x3:" << Print(x, 16) << std::endl;
+        std::cout << "x3: " << Print(x, 16) << std::endl;
 
         // merge the tweak into the output block
         for (j=0;j<AES_BLK_BYTES;j++)
