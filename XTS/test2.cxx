@@ -101,7 +101,6 @@ void XTS_EncryptSector
     uint    i,j;                    // local counters
     u08b    T[AES_BLK_BYTES];       // tweak value
     u08b    x[AES_BLK_BYTES];       // local work value
-    u08b    Cin,Cout;               // "carry" bits for LFSR shifting
 
     assert(N >= AES_BLK_BYTES);     // need at least a full AES block
 
