@@ -84,7 +84,7 @@ void AES_ECB_Decrypt(const AES_Key key, u08b* data, size_t size)
         throw std::runtime_error("EVP_DecryptFinal_ex failed");
 }
 
-void GF_Multiply(u08b* T)
+void GF_Double(u08b* T)
 {
     u08b Cin, Cout;
     uint j;
@@ -155,35 +155,37 @@ void XTS_EncryptSector
             ct[i+j] = x[j] ^ T[j];
 
         // LFSR "shift" the tweak value for the next location
-        GF_Multiply(T);
+        GF_Double(T);
+        
+        std::cout << "c" << i << ": " << Print(ct+i, 16) << std::endl;
     }
 
-    if (i < N)                               // is there a final partial block to handle?
+    // is there a final partial block to handle?
+    if (N % AES_BLK_BYTES == 0) {return;}
+
+    for (j=0;i+j<N;j++)
     {
-        for (j=0;i+j<N;j++)
-        {
-            x[j] = pt[i+j];           // copy in the final plaintext bytes
-            ct[i+j] = ct[i+j-AES_BLK_BYTES]; // and copy out the final ciphertext bytes
-        }
-        for (;j<AES_BLK_BYTES;j++)           // "steal" ciphertext to complete the block
-            x[j] = ct[i+j-AES_BLK_BYTES];
-
-        std::cout << "x1: " << Print(x, 16) << std::endl;
-
-        for (j=0;j<AES_BLK_BYTES;j++)
-            x[j] ^= T[j];
-
-        std::cout << "x2: " << Print(x, 16) << std::endl;
-
-        // encrypt the final block
-        AES_ECB_Encrypt(k1,x,sizeof(x));
-
-        std::cout << "x3: " << Print(x, 16) << std::endl;
-
-        // merge the tweak into the output block
-        for (j=0;j<AES_BLK_BYTES;j++)
-            ct[i+j-AES_BLK_BYTES] = x[j] ^ T[j];
+        x[j] = pt[i+j];                  // copy in the final plaintext bytes
+        ct[i+j] = ct[i+j-AES_BLK_BYTES]; // and copy out the final ciphertext bytes
     }
+    for (;j<AES_BLK_BYTES;j++)           // "steal" ciphertext to complete the block
+        x[j] = ct[i+j-AES_BLK_BYTES];
+
+    std::cout << "x1: " << Print(x, 16) << std::endl;
+
+    for (j=0;j<AES_BLK_BYTES;j++)
+        x[j] ^= T[j];
+
+    std::cout << "x2: " << Print(x, 16) << std::endl;
+
+    // encrypt the final block
+    AES_ECB_Encrypt(k1,x,sizeof(x));
+
+    std::cout << "x3: " << Print(x, 16) << std::endl;
+
+    // merge the tweak into the output block
+    for (j=0;j<AES_BLK_BYTES;j++)
+        ct[i+j-AES_BLK_BYTES] = x[j] ^ T[j];
 }
 
 void XTS_DecryptSector
@@ -225,50 +227,52 @@ void XTS_DecryptSector
             pt[i+j] = x[j] ^ T[j];
 
         // LFSR "shift" the tweak value for the next location
-        GF_Multiply(T);
+        GF_Double(T);
+        
+        std::cout << "p" << i << ": " << Print(pt+i, 16) << std::endl;
     }
+    
+    // is there a final partial block to handle?
+    if (N % AES_BLK_BYTES == 0) {return;}
 
-    if (i < N)                               // is there a final partial block to handle?
-    {
 #if 0
-        for (j=0;i+j<N;j++)
-        {
-            x[j] = ct[i+j] ^ T[j];           // copy in the final plaintext bytes
-            pt[i+j] = pt[i+j-AES_BLK_BYTES]; // and copy out the final ciphertext bytes
-        }
-        for (;j<AES_BLK_BYTES;j++)           // "steal" ciphertext to complete the block
-            x[j] = pt[i+j-AES_BLK_BYTES] ^ T[j];
+    for (j=0;i+j<N;j++)
+    {
+        x[j] = ct[i+j] ^ T[j];           // copy in the final plaintext bytes
+        pt[i+j] = pt[i+j-AES_BLK_BYTES]; // and copy out the final ciphertext bytes
+    }
+    for (;j<AES_BLK_BYTES;j++)           // "steal" ciphertext to complete the block
+        x[j] = pt[i+j-AES_BLK_BYTES] ^ T[j];
 
-        // encrypt the final block
-        AES_ECB_Decrypt(k1,x,sizeof(x));
+    // encrypt the final block
+    AES_ECB_Decrypt(k1,x,sizeof(x));
 
-        // merge the tweak into the output block
-        for (j=0;j<AES_BLK_BYTES;j++)
-            pt[i+j-AES_BLK_BYTES] = x[j] ^ T[j];
+    // merge the tweak into the output block
+    for (j=0;j<AES_BLK_BYTES;j++)
+        pt[i+j-AES_BLK_BYTES] = x[j] ^ T[j];
 #endif
 
-        for (j=0;j<AES_BLK_BYTES;j++)
-            x[j] = ct[i+j-AES_BLK_BYTES] ^ T[j];
+    for (j=0;j<AES_BLK_BYTES;j++)
+        x[j] = ct[i+j-AES_BLK_BYTES] ^ T[j];
 
-        std::cout << "x3: " << Print(x, 16) << std::endl;
+    std::cout << "x3: " << Print(x, 16) << std::endl;
 
-        AES_ECB_Decrypt(k1,x,sizeof(x));
+    AES_ECB_Decrypt(k1,x,sizeof(x));
 
-        std::cout << "x2: " << Print(x, 16) << std::endl;
+    std::cout << "x2: " << Print(x, 16) << std::endl;
 
-        for (j=0;j<AES_BLK_BYTES;j++)
-            x[j] ^= T[j];
+    for (j=0;j<AES_BLK_BYTES;j++)
+        x[j] ^= T[j];
 
-        std::cout << "x1: " << Print(x, 16) << std::endl;
+    std::cout << "x1: " << Print(x, 16) << std::endl;
 
-        //for (j=0;i+j<N;j++)
-        //{
-        //    x[j] = ct[i+j] ^ T[j];           // copy in the final plaintext bytes
-        //    pt[i+j] = pt[i+j-AES_BLK_BYTES]; // and copy out the final ciphertext bytes
-        //}
-        //for (;j<AES_BLK_BYTES;j++)           // "steal" ciphertext to complete the block
-        //    x[j] = pt[i+j-AES_BLK_BYTES] ^ T[j];
-    }
+    //for (j=0;i+j<N;j++)
+    //{
+    //    x[j] = ct[i+j] ^ T[j];             // copy in the final plaintext bytes
+    //    pt[i+j] = pt[i+j-AES_BLK_BYTES];   // and copy out the final ciphertext bytes
+    //}
+    //for (;j<AES_BLK_BYTES;j++)             // "steal" ciphertext to complete the block
+    //    x[j] = pt[i+j-AES_BLK_BYTES] ^ T[j];
 }
 
 /////////////////////////////////////////////////////////////////////
