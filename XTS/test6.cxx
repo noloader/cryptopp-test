@@ -1,4 +1,4 @@
-// g++ -Wall -I /usr/include/botan-2 -g2 -O0 -o test4.exe test4.cxx -pthread -l:libbotan-2.a -l:libcrypto.a -ldl
+// g++ -Wall -I /usr/include/botan-2 -g2 -O0 -o test6.exe test6.cxx -pthread -l:libbotan-2.a -l:libcrypto.a -ldl
 
 #include <botan-2/botan/aes.h>
 #include <botan-2/botan/xts.h>
