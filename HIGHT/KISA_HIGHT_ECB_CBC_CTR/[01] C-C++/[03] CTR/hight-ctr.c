@@ -492,7 +492,7 @@ void main()
 #endif
 
 // method 2 start
-void main()
+int main()
 {
 #ifndef HIGHT_BIG_ENDIAN
     printf("This program must be run on a big-endian machine to produce accurate test vectors.\n");
