@@ -542,7 +542,7 @@ int main()
 {
 #ifndef HIGHT_BIG_ENDIAN
     printf("This program must be run on a big-endian machine to produce accurate test vectors.\n");
-    // return 1;
+    return 1;
 #endif
 
     BYTE pbszUserKey[16] = {0x88, 0xe3, 0x4f, 0x8f, 0x08, 0x17, 0x79, 0xf1, 0xe9, 0xf3, 0x94, 0x37, 0x0a, 0xd4, 0x05, 0x89}; 
