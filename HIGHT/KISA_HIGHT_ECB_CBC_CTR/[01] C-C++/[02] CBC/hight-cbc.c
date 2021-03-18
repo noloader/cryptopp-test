@@ -557,8 +557,9 @@ int main()
     int i;
     int nPlainTextLen;
     int nCipherTextLen;
+	size_t len;
 
-    for (size_t len=8; len < sizeof(plainText); len+=8)
+    for (len=8; len < sizeof(plainText); len+=8)
     {
         nPlainTextLen = len;
         nCipherTextLen = HIGHT_CBC_Encrypt( pbszUserKey, pbszIV, plainText, 0, nPlainTextLen, pbszCipherText );
