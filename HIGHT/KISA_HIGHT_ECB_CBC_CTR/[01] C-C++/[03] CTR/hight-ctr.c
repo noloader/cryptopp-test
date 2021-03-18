@@ -1,13 +1,11 @@
+// Modified by Jeffrey Walton to produce test vectors for Crypto++
+
 #include "KISA_HIGHT_CTR.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 #define process_blockLeng    16
-
-inline size_t round_up_size(size_t n) {
-    return (((n+7)/8)*8);
-}
 
 unsigned char F0[256] = 
 {
@@ -483,9 +481,23 @@ void main()
 // method 1 end
 */
 
+#if (defined(__BYTE_ORDER__ ) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)) || \
+    defined(__LITTLE_ENDIAN__)
+# define HIGHT_LITTLE_ENDIAN 1
+#endif
+
+#if (defined(__BYTE_ORDER__ ) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)) || \
+    defined(__BIG_ENDIAN__)
+# define HIGHT_BIG_ENDIAN 1
+#endif
+
 // method 2 start
 void main()
 {
+#ifndef HIGHT_BIG_ENDIAN
+    printf("This program must be run on a big-endian machine to produce accurate test vectors.\n");
+    return 1;
+#endif
 
     BYTE pbszUserKey[16] = {0x088, 0x0e3, 0x04f, 0x08f, 0x008, 0x017, 0x079, 0x0f1, 0x0e9, 0x0f3, 0x094, 0x037, 0x00a, 0x0d4, 0x005, 0x089}; 
     BYTE pbszCounter[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfe};
@@ -558,32 +570,30 @@ void main()
         nOutputTextLen = i + nOutLeng - nEncRmainLeng;
     }
 
-    // printf ("\n\nCiphertext(%d) : ", nOutputTextLen);
-
     for (len=0; len < sizeof(lengths) && lengths[len] < sizeof(InputText); ++len)
     {
-		printf("#\n");
-		printf("Source: HIGHT reference implementation\n");
-		printf("Comment: HIGHT/CTR, 128-bit key\n");
+        printf("#\n");
+        printf("Source: HIGHT reference implementation\n");
+        printf("Comment: HIGHT/CTR, 128-bit key\n");
 
-		printf ("Key: ");
-		for (i=0;i<16;i++)    {printf("%02X ",pbszUserKey[i]);}
-		printf ("\n");
+        printf ("Key: ");
+        for (i=0;i<16;i++)    {printf("%02X ",pbszUserKey[i]);}
+        printf ("\n");
 
-		printf ("IV: ");
-		for (i=0;i<8;i++)    {printf("%02X ",pbszCounter[i]);}
-		printf ("\n");
+        printf ("IV: ");
+        for (i=0;i<8;i++)    {printf("%02X ",pbszCounter[i]);}
+        printf ("\n");
 
-		printf ("Plaintext: ");
-		for (i=0;i<lengths[len];i++)    {printf("%02X ",InputText[i]);}
-		printf ("\n");
+        printf ("Plaintext: ");
+        for (i=0;i<lengths[len];i++)    {printf("%02X ",InputText[i]);}
+        printf ("\n");
 
-		printf ("Ciphertext: ");
-		for (i=0;i<lengths[len];i++)    {printf("%02X ",OutputBytes[i]);}
-		printf ("\n");
+        printf ("Ciphertext: ");
+        for (i=0;i<lengths[len];i++)    {printf("%02X ",OutputBytes[i]);}
+        printf ("\n");
 
-    	printf("Test: Encrypt\n");
+        printf("Test: Encrypt\n");
     }
-
+    return 0;
 }
 // method 2 end
