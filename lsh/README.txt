@@ -12,3 +12,4 @@ Once the two gen programs are built, they will generate test vectors using the r
 
   ./gen_lsh256.exe > ~/cryptopp/TestVectors/lsh256.txt
   ./gen_lsh512.exe > ~/cryptopp/TestVectors/lsh512.txt
+  ./gen_lsh512_256.exe > ~/cryptopp/TestVectors/lsh512_256.txt
