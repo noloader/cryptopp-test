@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 
 	printf("AlgorithmType: MessageDigest\n");
 	printf("Name: LSH-384\n");
-	printf("Source: gen_lsh512.cpp, https://github.com/noloader/cryptopp-test\n");
+	printf("Source: gen_lsh512.cpp, https://github.com/noloader/cryptopp-test/lsh\n");
 	alg = LSH_TYPE_512_384;
 
 	// Random messages
@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
 	printf("\n");
 	printf("AlgorithmType: MessageDigest\n");
 	printf("Name: LSH-512\n");
-	printf("Source: gen_lsh512.cpp, https://github.com/noloader/cryptopp-test\n");
+	printf("Source: gen_lsh512.cpp, https://github.com/noloader/cryptopp-test/lsh\n");
 	alg = LSH_TYPE_512_512;
 
 	// Random messages
